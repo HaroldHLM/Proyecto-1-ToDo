@@ -48,6 +48,9 @@ module.exports = {
     node: true
   },
   rules: {
-    // Puedes personalizar reglas aquí
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'jsx-a11y/anchor-is-valid': 'off'
   }
 };
