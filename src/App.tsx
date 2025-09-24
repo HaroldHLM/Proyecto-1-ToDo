@@ -25,10 +25,22 @@ const App: React.FC = () => {
     setTodos(newTodos)
   }
 
+
+const handleComplete = ({ id, completed }: { id: number; completed: boolean }): void => {
+  const newTodos = todos.map(todo =>{
+    if (todo.id === id) {
+      return { ...todo, completed };
+    }
+    return todo;
+  })
+  setTodos(newTodos)
+}
+
   return (
     <div className="todoapp">
       <Todos 
         onRemoveTodo={handleRemove}
+        onToggleCompleteTodo={handleComplete}
         todos={todos} />
     </div>
     
