@@ -9,7 +9,8 @@ export const CreateTodo: React.FC<Props> = ({ saveTodo }) => {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault()
-        saveTodo({ title: inputValue } as unknown as string)
+        if (inputValue.trim().length === 0) return
+        saveTodo(inputValue )
         setInputValue('')
     }
     return (
