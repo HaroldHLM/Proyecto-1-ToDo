@@ -44,6 +44,11 @@ const handleFilterChange = (filter: FilterValue): void => {
   setFilterSelected(filter)
 }
 
+const handleRemoveAllCompleted = (): void => {
+  const newTodos = todos.filter(todo => !todo.completed)
+  setTodos(newTodos)
+}
+
 const activeCount = todos.filter(todo => !todo.completed).length
 const completedCount = todos.length - activeCount
 
@@ -66,10 +71,7 @@ const filteredTodos = todos.filter(todo => {
         completedCount={completedCount}
         filterSelected={filterSelected}
         handleFilterChange={handleFilterChange}
-        onClearCompleted={() => {
-          const newTodos = todos.filter(todo => !todo.completed)
-          setTodos(newTodos)
-        }}
+        onClearCompleted={handleRemoveAllCompleted}
       />
     </div>    
   )
