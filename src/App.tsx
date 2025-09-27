@@ -59,8 +59,16 @@ const filteredTodos = todos.filter(todo => {
   return todo
 })
 
-  const handleAddTodo = (title: string): void => {
-    const newTodo = {
+const handleEditTodo = (id: string | number, title: string): void => {
+  setTodos(todos =>
+    todos.map(todo =>
+      todo.id === id ? { ...todo, title } : todo
+    )
+  )
+}
+
+const handleAddTodo = (title: string): void => {
+  const newTodo = {
       title,
       id: crypto.randomUUID(),
       completed: false
@@ -76,7 +84,9 @@ const filteredTodos = todos.filter(todo => {
       <Todos 
         onToggleCompleteTodo={handleComplete}
         onRemoveTodo={handleRemove}
-        todos={filteredTodos} />
+        todos={filteredTodos} 
+        onEditTodo={handleEditTodo}
+      />
 
 
       <Footer
