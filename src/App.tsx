@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Todos } from "./components/Todos";
 import { TODO_FILTERS } from "./consts";
 import type { FilterValue } from "./types.d";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-
+import * as api from './backend/Api'
 
 const mockTodos = [
   { id: 1, 
@@ -25,9 +25,20 @@ const App: React.FC = () => {
   const [todos, setTodos] = useState<Array<{ id: string | number; title: string; completed: boolean }>>(mockTodos)
   const [filterSelected, setFilterSelected] = useState<FilterValue>(TODO_FILTERS.All)
 
-  const handleRemove = (id: string | number):void => {
-    const newTodos = todos.filter(todo => todo.id !== id)
-    setTodos(newTodos)
+  useEffect(() =>{
+    api.fetchTodos().then(setTodos).catch(() => {
+      console.error('Error fetching todos from API')
+    })
+  }, [])
+
+  const handleRemove = async (id: string | number): Promise<void> => {
+    try{
+      await api.deleteTodo(id)
+      setTodos(todos => todos.filter(todo => todo.id !== id))
+    }
+    catch(error) {
+      console.error('Error deleting todo from API', error)
+    }  
   }
 
 

@@ -51,7 +51,7 @@ export const Todo: React.FC<Props> = ({ id,  title, completed, onRemoveTodo, onT
             onChange = {handleChangeCheckbox}
         />
         {editing ? (
-          <input
+          <input className='new-todo'
             value={editText}
             onChange={handleChange}
             onBlur={handleBlur}
