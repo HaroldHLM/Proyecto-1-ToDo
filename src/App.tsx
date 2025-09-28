@@ -6,23 +6,10 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import * as api from './backend/Api'
 
-const mockTodos = [
-  { id: 1, 
-    title: "Learn TypeScript", 
-    completed: true
-  },
-  { id: 2, 
-    title: "Build a Todo App", 
-    completed: false
-   },
-  { id: 3, 
-    title: "Master React", 
-    completed: false 
-  },
-]
+
 
 const App: React.FC = () => {
-  const [todos, setTodos] = useState<Array<{ id: string | number; title: string; completed: boolean }>>(mockTodos)
+  const [todos, setTodos] = useState<Array<{ id: string | number; title: string; completed: boolean }>>([])
   const [filterSelected, setFilterSelected] = useState<FilterValue>(TODO_FILTERS.All)
 
   useEffect(() =>{
@@ -34,7 +21,7 @@ const App: React.FC = () => {
   const handleRemove = async (id: string | number): Promise<void> => {
     try{
       await api.deleteTodo(id)
-      setTodos(todos => todos.filter(todo => todo.id !== id))
+      setTodos(prev => prev.filter(todo => todo.id !== id))
     }
     catch(error) {
       console.error('Error deleting todo from API', error)
@@ -42,9 +29,9 @@ const App: React.FC = () => {
   }
 
 
-const handleComplete = ({ id, completed }: { id: string |number; completed: boolean }): void => {
+const handleComplete = async ({ id, completed }: { id: string |number; completed: boolean }): Promise<void> => {
   try{
-    api.updateTodo(id, { completed })
+    await  api.updateTodo(id, { completed })
     setTodos(prev => prev.map(todo => todo.id === id? { ...todo, completed } : todo))
   } catch(error) {
     console.error('Error updating todo in API', error)
@@ -55,9 +42,14 @@ const handleFilterChange = (filter: FilterValue): void => {
   setFilterSelected(filter)
 }
 
-const handleRemoveAllCompleted = (): void => {
-  const newTodos = todos.filter(todo => !todo.completed)
-  setTodos(newTodos)
+const handleRemoveAllCompleted = async (): Promise<void> => {
+  try{
+    const completedIds = todos.filter(todo => todo.completed).map(todo => todo.id)
+    await Promise.all(completedIds.map(id => api.deleteTodo(id)))
+    setTodos(todos => todos.filter(todo => !todo.completed))
+  } catch(error) {
+    console.error('Error removing completed todos from API', error)
+  }
 }
 
 const activeCount = todos.filter(todo => !todo.completed).length
@@ -69,22 +61,29 @@ const filteredTodos = todos.filter(todo => {
   return todo
 })
 
-const handleEditTodo = (id: string | number, title: string): void => {
-  setTodos(todos =>
-    todos.map(todo =>
-      todo.id === id ? { ...todo, title } : todo
+const handleEditTodo = async (id: string | number, title: string): Promise<void> => {
+  try{
+    const next = title.trim()
+    if(!next) throw new Error('Title cannot be empty')
+    await api.updateTodo(id, { title: next })
+    setTodos(todos => 
+      todos.map(todo => 
+        todo.id === id ? { ...todo, title: next } : todo
+      )
     )
-  )
+  } catch(error) {
+    console.error('Error updating todo in API', error)
+  }
 }
 
-const handleAddTodo = (title: string): void => {
-  const newTodo = {
-      title,
-      id: crypto.randomUUID(),
-      completed: false
-    }
-  const newTodos = [...todos, newTodo]
-  setTodos(newTodos)
+
+const handleAddTodo = async (title: string): Promise<void> => {
+  try{
+    const newTodo = await api.createTodo(title)
+    setTodos(todos => [...todos, newTodo])
+  } catch(error) {
+    console.error('Error creating todo in API', error)
+  }  
 }
     
 

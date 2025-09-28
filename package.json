@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "json-server -w db.json -p 3001",
+    "server": "json-server -w src/backend/db.json -p 3001",
     "dev:all": "concurrently -k -n client,server -c blue,magenta \"npm run dev\" \"npm run server\""
   },
   "dependencies": {
