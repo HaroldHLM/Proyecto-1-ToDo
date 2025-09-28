@@ -27,3 +27,15 @@ export async function deleteTodo(id: string | number): Promise<void> {
     })
     if(!res.ok) throw new Error('Error deleting todo')
 }
+
+export async function updateTodo(id: string | number, updates: Partial<Omit<Todo, 'id'>>): Promise<Todo> {
+    const res = await fetch(`${API_URL}/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updates)
+    })
+    if(!res.ok) throw new Error('Error updating todo')
+    return await res.json()
+}

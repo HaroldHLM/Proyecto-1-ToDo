@@ -43,13 +43,12 @@ const App: React.FC = () => {
 
 
 const handleComplete = ({ id, completed }: { id: string |number; completed: boolean }): void => {
-  const newTodos = todos.map(todo =>{
-    if (todo.id === id) {
-      return { ...todo, completed };
-    }
-    return todo;
-  })
-  setTodos(newTodos)
+  try{
+    api.updateTodo(id, { completed })
+    setTodos(prev => prev.map(todo => todo.id === id? { ...todo, completed } : todo))
+  } catch(error) {
+    console.error('Error updating todo in API', error)
+  }
 }
 
 const handleFilterChange = (filter: FilterValue): void => {
