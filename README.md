@@ -1,69 +1,100 @@
-# React + TypeScript + Vite
+# Proyecto ToDo – React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación ToDo estilo TodoMVC construida con React + TypeScript y Vite. Permite crear, marcar como completadas, editar con doble clic y eliminar tareas. Incluye filtros (Todos, Activos, Completados), animaciones suaves al añadir/eliminar con AutoAnimate y sincronización con un backend local usando JSON Server.
 
-Currently, two official plugins are available:
+## Demo rápida
+- Editar: doble clic en el texto de la tarea, Enter/blur para guardar, Escape para cancelar.
+- Completar: checkbox a la izquierda.
+- Eliminar: botón con icono de “destroy”.
+- Filtrar: barra inferior (Todos / Activos / Completados).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Características
+- React + TypeScript con Vite.
+- Estilos base de TodoMVC (`todomvc-app-css`).
+- Animaciones con `@formkit/auto-animate` en la lista.
+- Edición inline por doble clic.
+- Estado tipado y handlers claros para crear, editar, completar, eliminar, y limpiar completados.
+- Backend simulado con `json-server` y cliente fetch en `src/backend/Api.tsx`.
 
-## Expanding the ESLint configuration
+## Estructura relevante
+- `src/App.tsx`: wiring principal, filtros y handlers.
+- `src/components/Todos.tsx`: listado y render de cada `Todo` (con AutoAnimate).
+- `src/components/Todo.tsx`: ítem individual, edición inline, completar/eliminar.
+- `src/components/Header.tsx` + `src/components/CreateTodo.tsx`: formulario para crear tareas.
+- `src/components/Footer.tsx`: contador y filtros.
+- `src/backend/Api.tsx`: funciones fetch (listar, crear, actualizar, borrar).
+- `src/backend/db.json`: base de datos para JSON Server.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Requisitos
+- Node.js 18+ recomendado.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Puesta en marcha
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1) Instalar dependencias
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2) Ejecutar cliente + backend juntos
+```bash
+npm run dev:all
 ```
+Esto lanza:
+- Vite (cliente) en http://localhost:5173
+- JSON Server en http://localhost:3001 (endpoint: `/todos`)
+
+Si prefieres ejecutarlos por separado:
+```bash
+npm run dev     # cliente
+npm run server  # backend (lee src/backend/db.json)
+```
+
+## Configuración del backend
+- Base de datos: `src/backend/db.json` (inicialmente vacía o con datos de ejemplo)
+```json
+{
+  "todos": [
+    { "id": 1, "title": "Learn TypeScript", "completed": true },
+    { "id": 2, "title": "Build a Todo App", "completed": false },
+    { "id": 3, "title": "Master React", "completed": false }
+  ]
+}
+```
+
+- Scripts en `package.json`:
+```json
+{
+  "scripts": {
+    "server": "json-server -w src/backend/db.json -p 3001",
+    "dev:all": "concurrently -k -n client,server -c blue,magenta \"npm run dev\" \"npm run server\""
+  }
+}
+```
+
+- Puedes definir `VITE_API_URL` en `.env.local` si quieres cambiar la URL del backend:
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+## Cliente de API (resumen)
+Archivo: `src/backend/Api.tsx`
+- `fetchTodos()`: GET `/todos`
+- `createTodo(title)`: POST `/todos`
+- `updateTodo(id, patch)`: PATCH `/todos/:id`
+- `deleteTodo(id)`: DELETE `/todos/:id`
+
+## Linting y formato
+- ESLint está configurado con reglas para React + TypeScript.
+- Ejecuta:
+```bash
+npm run lint
+```
+
+## Próximos pasos sugeridos
+- Migrar a `useReducer` para centralizar la lógica del estado.
+- Persistencia remota optimista (optimistic UI) y manejo de errores UI.
+- Tests unitarios de componentes y de la API.
+
+---
+
+Hecho con React + TypeScript, animado con AutoAnimate y potenciado por JSON Server para un flujo local completo.
