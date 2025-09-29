@@ -22,35 +22,3 @@ export default tseslint.config([
   },
 ])
 
-module.exports = {
-  parser: '@typescript-eslint/parser',
-  plugins: [
-    'react',
-    'react-hooks',
-    '@typescript-eslint',
-    'jsx-a11y'
-  ],
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended'
-  ],
-  settings: {
-    react: {
-      version: 'detect'
-    }
-  },
-  env: {
-    browser: true,
-    es2021: true,
-    node: true
-  },
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'jsx-a11y/anchor-is-valid': 'off'
-  }
-};
